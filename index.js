@@ -36,6 +36,7 @@ const corsOptions = {
   origin: [
     'https://www.hotandcold.cl',
     'https://hotandcold.onrender.com',
+    'https://frontend-hotandcold.onrender.com',
     'http://localhost:3000',
     'http://localhost:5173'
   ],
