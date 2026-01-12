@@ -1,17 +1,26 @@
+/**
+ * Routes - Autenticación
+ * Endpoints para registro y login con Firestore + bcrypt
+ */
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { db } = require('../config/firebaseAdmin');
-
+const { MESSAGES, BCRYPT_ROUNDS } = require('../config/constants');
 
 const router = express.Router();
 
-// Registro
+/**
+ * POST /api/register - Registro de usuario
+ * Crea nuevo usuario con contraseña encriptada
+ */
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
-  
-  console.log('📝 Registro:', { username });
+
+  console.log('📝 POST /api/register:', { username });
 
   try {
+    // Validar campos requeridos
     if (!username || !password) {
       return res.status(400).json({ message: 'Usuario y contraseña requeridos' });
     }
@@ -19,58 +28,92 @@ router.post('/register', async (req, res) => {
     // Buscar usuario existente
     console.log('🔍 Buscando usuario en Firestore...');
     const userQuery = await db.collection('usuarios').where('username', '==', username).get();
-    
+
     if (!userQuery.empty) {
       console.log('⚠️ Usuario ya existe');
-      return res.status(400).json({ message: 'El usuario ya existe' });
+      return res.status(409).json({ message: MESSAGES.USER_EXISTS });
     }
 
-    // Hash de contraseña
-    console.log('🔐 Hasheando contraseña...');
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Encriptar contraseña
+    console.log('🔐 Encriptando contraseña...');
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
-    // Guardar usuario
+    // Guardar usuario en Firestore
     console.log('💾 Guardando en Firestore...');
-    await db.collection('usuarios').add({
+    const docRef = await db.collection('usuarios').add({
       username,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
 
-    console.log('✅ Usuario registrado exitosamente');
-    res.status(201).json({ message: 'Usuario registrado con éxito' });
+    console.log('✅ Usuario registrado exitosamente:', docRef.id);
+    res.status(201).json({
+      message: MESSAGES.REGISTER_SUCCESS,
+      userId: docRef.id,
+      username
+    });
   } catch (err) {
     console.error('❌ Error en registro:', err.message);
-    console.error('Stack:', err.stack);
-    res.status(500).json({ 
-      message: 'Error del servidor', 
-      error: err.message,
-      code: err.code 
+    res.status(500).json({
+      message: MESSAGES.SERVER_ERROR,
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
   }
 });
 
-// Login
+/**
+ * POST /api/login - Autenticación de usuario
+ * Verifica credenciales y devuelve información del usuario
+ */
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
+  console.log('📝 POST /api/login:', { username });
+
   try {
-    const userQuery = await db.collection('usuarios').where('username', '==', username).limit(1).get();
-    if (userQuery.empty) {
-      return res.status(401).json({ message: 'Usuario no encontrado' });
+    // Validar campos requeridos
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Usuario y contraseña requeridos' });
     }
 
+    // Buscar usuario
+    console.log('🔍 Buscando usuario...');
+    const userQuery = await db.collection('usuarios')
+      .where('username', '==', username)
+      .limit(1)
+      .get();
+
+    if (userQuery.empty) {
+      console.log('⚠️ Usuario no encontrado');
+      return res.status(401).json({ message: MESSAGES.USER_NOT_FOUND });
+    }
+
+    // Obtener datos del usuario
     const userData = userQuery.docs[0].data();
+    const userId = userQuery.docs[0].id;
+
+    // Verificar contraseña
+    console.log('🔐 Verificando contraseña...');
     const validPassword = await bcrypt.compare(password, userData.password);
 
     if (!validPassword) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
+      console.log('⚠️ Contraseña incorrecta');
+      return res.status(401).json({ message: MESSAGES.INVALID_PASSWORD });
     }
 
-    res.json({ message: 'Login exitoso', username: userData.username });
+    console.log('✅ Login exitoso:', username);
+    res.json({
+      message: MESSAGES.LOGIN_SUCCESS,
+      userId,
+      username: userData.username
+    });
   } catch (err) {
-    console.error('Error en login:', err);
-    res.status(500).json({ message: 'Error del servidor' });
+    console.error('❌ Error en login:', err.message);
+    res.status(500).json({
+      message: MESSAGES.SERVER_ERROR,
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
