@@ -50,6 +50,16 @@ app.use(cors(corsOptions));
 // RUTAS
 // ============================================
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 app.use('/api', authRoutes);
 app.use('/api', contactRoutes);
 
@@ -72,6 +82,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`✅ Servidor escuchando en http://localhost:${PORT}`);
   console.log('📊 Rutas disponibles:');
+  console.log('   GET  /health');
   console.log('   POST /api/register');
   console.log('   POST /api/login');
   console.log('   POST /api/contact');
