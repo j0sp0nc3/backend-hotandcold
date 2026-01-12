@@ -1,0 +1,47 @@
+type User @table {
+  displayName: String!
+  email: String!
+  role: String!
+  createdAt: Timestamp!
+  phoneNumber: String
+  address: String
+}
+
+type Technician @table {
+  user: User!
+  specialty: String!
+  availabilityStatus: String!
+  certifications: String
+}
+
+type ServiceRequest @table {
+  client: User!
+  technician: Technician
+  serviceType: String!
+  description: String!
+  status: String!
+  requestedDate: Date!
+  createdAt: Timestamp!
+  scheduledDate: Date
+  notes: String
+}
+
+type Invoice @table {
+  serviceRequest: ServiceRequest!
+  client: User!
+  invoiceNumber: String!
+  amount: Float!
+  status: String!
+  issuedDate: Date!
+  dueDate: Date!
+  paymentDate: Date
+}
+
+type ServiceLog @table {
+  serviceRequest: ServiceRequest!
+  technician: Technician!
+  logDate: Timestamp!
+  description: String!
+  type: String!
+  partsUsed: String
+}
