@@ -34,7 +34,9 @@ app.use(express.json());
 // Configurar CORS
 const corsOptions = {
   origin: [
+    'https://hotandcold.cl',
     'https://www.hotandcold.cl',
+    'https://backend.hotandcold.cl',
     'https://hotandcold.onrender.com',
     'https://frontend-hotandcold.onrender.com',
     'http://localhost:3000',
