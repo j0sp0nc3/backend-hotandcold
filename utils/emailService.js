@@ -1,53 +1,41 @@
 /**
  * Email Service Utility
- * Centraliza la lógica de envío de emails con nodemailer
+ * Centraliza la lógica de envío de emails con Resend
  */
 
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Crear transporter una sola vez (reutilizable)
-let transporter = null;
+// Inicializar Resend
+let resend = null;
 
 /**
- * Obtener o crear el transporter de nodemailer
+ * Obtener o crear la instancia de Resend
  */
-function getTransporter() {
-  if (!transporter) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn('⚠️ EMAIL_USER o EMAIL_PASS no configurados en .env');
+function getResend() {
+  if (!resend) {
+    if (!process.env.RESEND_API_KEY) {
+      console.warn('⚠️ RESEND_API_KEY no configurado en .env');
       return null;
     }
-
-    transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, // true para puerto 465, false para otros puertos
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      },
-      tls: {
-        rejectUnauthorized: true
-      }
-    });
+    resend = new Resend(process.env.RESEND_API_KEY);
   }
-  return transporter;
+  return resend;
 }
 
 /**
  * Enviar email de cotización
  */
 async function sendQuotationEmail(data) {
-  const transporter = getTransporter();
-  if (!transporter) {
-    throw new Error('Email service no configurado. Verificar .env');
+  const resendClient = getResend();
+  if (!resendClient) {
+    throw new Error('Email service no configurado. Verificar RESEND_API_KEY en .env');
   }
 
   const { nombre, apellido, email, telefono, direccion, rol } = data;
 
-  await transporter.sendMail({
-    from: `"Formulario Web" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_TO,
+  await resendClient.emails.send({
+    from: 'Formulario Web <onboarding@resend.dev>',
+    to: process.env.EMAIL_TO || 'beroiza79@gmail.com',
     subject: 'Nueva Cotización desde el formulario',
     html: `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -91,16 +79,16 @@ async function sendQuotationEmail(data) {
  * Enviar email de contacto desde footer
  */
 async function sendContactEmail(data) {
-  const transporter = getTransporter();
-  if (!transporter) {
-    throw new Error('Email service no configurado. Verificar .env');
+  const resendClient = getResend();
+  if (!resendClient) {
+    throw new Error('Email service no configurado. Verificar RESEND_API_KEY en .env');
   }
 
   const { nombre, apellido, telefono, email, mensaje } = data;
 
-  await transporter.sendMail({
-    from: `"Formulario Web" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_TO,
+  await resendClient.emails.send({
+    from: 'Formulario Web <onboarding@resend.dev>',
+    to: process.env.EMAIL_TO || 'beroiza79@gmail.com',
     subject: 'Nuevo Mensaje desde el Formulario de Contacto (Footer)',
     html: `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -139,5 +127,5 @@ async function sendContactEmail(data) {
 module.exports = {
   sendQuotationEmail,
   sendContactEmail,
-  getTransporter
+  getResend
 };
