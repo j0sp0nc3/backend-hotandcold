@@ -11,6 +11,7 @@ require('dotenv').config();
 // Rutas modulares
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
+const productsRoutes = require('./routes/products');
 
 // Inicializar Express
 const app = express();
@@ -65,6 +66,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api', authRoutes);
 app.use('/api', contactRoutes);
+app.use('/api/products', productsRoutes);
 
 // ============================================
 // MANEJO DE ERRORES
@@ -89,6 +91,11 @@ app.listen(PORT, () => {
   console.log('   POST /api/register');
   console.log('   POST /api/login');
   console.log('   POST /api/contact');
-  console.log('   POST /api/contact-footer\n');
+  console.log('   POST /api/contact-footer');
+  console.log('   GET  /api/products');
+  console.log('   GET  /api/products/:id');
+  console.log('   POST /api/products');
+  console.log('   PUT  /api/products/:id');
+  console.log('   DELETE /api/products/:id\n');
 });
 
