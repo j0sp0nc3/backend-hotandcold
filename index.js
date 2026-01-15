@@ -12,6 +12,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
 const productsRoutes = require('./routes/products');
+const cloudinaryRoutes = require('./routes/cloudinary');
 
 // Inicializar Express
 const app = express();
@@ -80,6 +81,7 @@ app.get('/health', (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api', contactRoutes);
 app.use('/api/products', productsRoutes);
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // ============================================
 // MANEJO DE ERRORES
