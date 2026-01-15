@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../config/firebaseAdmin');
 const verifyToken = require('../middlewares/verifyToken');
+const verifyApiKey = require('../middlewares/verifyApiKey');
 
 /**
  * GET /api/products
- * Obtener todos los productos
+ * Obtener todos los productos (requiere API Key)
  */
-router.get('/', async (req, res) => {
+router.get('/', verifyApiKey, async (req, res) => {
   try {
     const productosSnapshot = await db.collection('productos').get();
     const productos = [];
@@ -36,9 +37,9 @@ router.get('/', async (req, res) => {
 
 /**
  * GET /api/products/:id
- * Obtener un producto por ID
+ * Obtener un producto por ID (requiere API Key)
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyApiKey, async (req, res) => {
   try {
     const { id } = req.params;
     const productoDoc = await db.collection('productos').doc(id).get();

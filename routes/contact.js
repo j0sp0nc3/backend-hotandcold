@@ -7,14 +7,15 @@ const express = require('express');
 const { sendQuotationEmail, sendContactEmail } = require('../utils/emailService');
 const { db } = require('../config/firebaseAdmin');
 const { MESSAGES } = require('../config/constants');
+const verifyApiKey = require('../middlewares/verifyApiKey');
 
 const router = express.Router();
 
 /**
  * POST /api/contact - Cotización
- * Guarda cotización en Firestore y envía email
+ * Guarda cotización en Firestore y envía email (requiere API Key)
  */
-router.post('/contact', async (req, res) => {
+router.post('/contact', verifyApiKey, async (req, res) => {
   const { nombre, apellido, email, telefono, direccion, rol } = req.body;
 
   console.log('📝 POST /api/contact:', { nombre, email });
@@ -62,9 +63,9 @@ router.post('/contact', async (req, res) => {
 
 /**
  * POST /api/contact-footer - Mensaje de contacto
- * Guarda mensaje en Firestore y envía email
+ * Guarda mensaje en Firestore y envía email (requiere API Key)
  */
-router.post('/contact-footer', async (req, res) => {
+router.post('/contact-footer', verifyApiKey, async (req, res) => {
   const { nombre, apellido, telefono, email, mensaje } = req.body;
 
   console.log('📝 POST /api/contact-footer:', { nombre, email });
