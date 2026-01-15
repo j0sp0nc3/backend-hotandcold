@@ -1,8 +1,8 @@
 // backend/middlewares/verifyToken.js
 const jwt = require('jsonwebtoken');
 
-// Secret para JWT - debe coincidir con el de auth.js
-const JWT_SECRET = process.env.JWT_SECRET || 'hotandcold-secret-key-2026';
+// Secret para JWT - DEBE estar en .env
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * Middleware de autenticación

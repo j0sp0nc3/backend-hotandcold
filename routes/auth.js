@@ -9,9 +9,14 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../config/firebaseAdmin');
 const { MESSAGES, BCRYPT_ROUNDS } = require('../config/constants');
 
-// Secret para JWT - en producción debe estar en .env
-const JWT_SECRET = process.env.JWT_SECRET || 'hotandcold-secret-key-2026';
+// Secret para JWT - DEBE estar en .env
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = '7d';
+
+// Validar que JWT_SECRET esté configurado
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET no está configurado en las variables de entorno');
+}
 
 const router = express.Router();
 

@@ -3,11 +3,13 @@
  * Protege rutas públicas para que solo aplicaciones autorizadas accedan
  */
 
-// API Keys válidas - en producción deben estar en .env
-const VALID_API_KEYS = [
-  process.env.API_KEY_FRONTEND || 'hotandcold-frontend-2026-key',
-  process.env.API_KEY_ADMIN || 'hotandcold-admin-2026-key'
-];
+// API Keys válidas - DEBEN estar en .env en producción
+const VALID_API_KEYS = (process.env.VALID_API_KEYS || '').split(',').filter(Boolean);
+
+// Validar que haya al menos una API key configurada
+if (VALID_API_KEYS.length === 0) {
+  console.error('⚠️ ADVERTENCIA: No hay API Keys configuradas en VALID_API_KEYS');
+}
 
 /**
  * Verifica que la petición incluya un API Key válido
