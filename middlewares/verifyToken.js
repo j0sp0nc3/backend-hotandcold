@@ -1,9 +1,12 @@
 // backend/middlewares/verifyToken.js
-const admin = require("../config/firebaseAdmin");
+const jwt = require('jsonwebtoken');
+
+// Secret para JWT - debe coincidir con el de auth.js
+const JWT_SECRET = process.env.JWT_SECRET || 'hotandcold-secret-key-2026';
 
 /**
  * Middleware de autenticación
- * Verifica token de Firebase Auth
+ * Verifica token JWT
  */
 async function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -27,9 +30,9 @@ async function verifyToken(req, res, next) {
   }
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
-    console.log(`✅ Usuario autenticado: ${decodedToken.email || decodedToken.uid}`);
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    console.log(`✅ Usuario autenticado: ${decoded.username || decoded.userId}`);
     next();
   } catch (error) {
     console.error('❌ Token inválido:', error.message);

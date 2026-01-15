@@ -1,12 +1,17 @@
 /**
  * Routes - Autenticación
- * Endpoints para registro y login con Firestore + bcrypt
+ * Endpoints para registro y login con Firestore + bcrypt + JWT
  */
 
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { db } = require('../config/firebaseAdmin');
 const { MESSAGES, BCRYPT_ROUNDS } = require('../config/constants');
+
+// Secret para JWT - en producción debe estar en .env
+const JWT_SECRET = process.env.JWT_SECRET || 'hotandcold-secret-key-2026';
+const JWT_EXPIRES_IN = '7d';
 
 const router = express.Router();
 
@@ -102,11 +107,19 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: MESSAGES.INVALID_PASSWORD });
     }
 
+    // Generar JWT token
+    const token = jwt.sign(
+      { userId, username: userData.username },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
     console.log('✅ Login exitoso:', username);
     res.json({
       message: MESSAGES.LOGIN_SUCCESS,
       userId,
-      username: userData.username
+      username: userData.username,
+      token
     });
   } catch (err) {
     console.error('❌ Error en login:', err.message);
