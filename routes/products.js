@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { db } = require('../config/firebaseAdmin');
+const verifyToken = require('../middlewares/verifyToken');
 
 /**
  * GET /api/products
@@ -68,9 +69,9 @@ router.get('/:id', async (req, res) => {
 
 /**
  * POST /api/products
- * Crear un nuevo producto
+ * Crear un nuevo producto (Requiere autenticación)
  */
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { titulo, descripcion, imagenUrl, precio, categoria, disponible } = req.body;
 
@@ -115,9 +116,9 @@ router.post('/', async (req, res) => {
 
 /**
  * PUT /api/products/:id
- * Actualizar un producto existente
+ * Actualizar un producto existente (Requiere autenticación)
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { titulo, descripcion, imagenUrl, precio, categoria, disponible } = req.body;
@@ -163,9 +164,9 @@ router.put('/:id', async (req, res) => {
 
 /**
  * DELETE /api/products/:id
- * Eliminar un producto
+ * Eliminar un producto (Requiere autenticación)
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 

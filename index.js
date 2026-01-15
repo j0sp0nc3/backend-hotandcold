@@ -23,14 +23,27 @@ console.log('🚀 Iniciando servidor backend...\n');
 // MIDDLEWARES
 // ============================================
 
+// Seguridad básica - Headers de seguridad
+app.use((req, res, next) => {
+  // Prevenir clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  // Prevenir MIME-type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // XSS Protection
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  // Strict Transport Security (HTTPS)
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+
 // Debug middleware
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.path}`);
   next();
 });
 
-// Parseo de JSON
-app.use(express.json());
+// Parseo de JSON con límite de tamaño
+app.use(express.json({ limit: '10mb' }));
 
 // Configurar CORS
 const corsOptions = {
