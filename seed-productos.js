@@ -26,7 +26,7 @@ const productos = [
     disponible: true,
     categoria: 'calefaccion',
     subcategoria: 'termos-electricos',
-    imagenUrl: 'https://res.cloudinary.com/dmmlobp9k/image/upload/v1745337120/n9fnhenvinxpokyffom3.jpg',
+    imagenUrl: 'https://res.cloudinary.com/dnfjrc2de/image/upload/v1737004690/n9fnhenvinxpokyffom3_qr0a2b.jpg',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -55,7 +55,7 @@ const productos = [
     disponible: true,
     categoria: 'calefaccion',
     subcategoria: 'termos-electricos',
-    imagenUrl: 'https://res.cloudinary.com/dmmlobp9k/image/upload/v1745337215/losgkjuebhopnerqcyen.webp',
+    imagenUrl: 'https://res.cloudinary.com/dnfjrc2de/image/upload/v1737004726/losgkjuebhopnerqcyen_xlvkdj.webp',
     createdAt: new Date(),
     updatedAt: new Date()
   },
@@ -86,7 +86,7 @@ const productos = [
     disponible: true,
     categoria: 'calefaccion',
     subcategoria: 'termos-electricos',
-    imagenUrl: 'https://res.cloudinary.com/dmmlobp9k/image/upload/v1745337172/bus5q47qeqyjnhyxma3d.webp',
+    imagenUrl: 'https://res.cloudinary.com/dnfjrc2de/image/upload/v1737004710/bus5q47qeqyjnhyxma3d_nk8xsm.webp',
     createdAt: new Date(),
     updatedAt: new Date()
   }
