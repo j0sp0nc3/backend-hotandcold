@@ -33,7 +33,7 @@ async function sendQuotationEmail(data) {
 
   const { nombre, apellido, email, telefono, direccion, rol } = data;
 
-  await resendClient.emails.send({
+  const emailOptions = {
     from: 'Formulario Web <onboarding@resend.dev>',
     to: process.env.EMAIL_TO || 'beroiza79@gmail.com',
     subject: 'Nueva Cotización desde el formulario',
@@ -72,11 +72,19 @@ async function sendQuotationEmail(data) {
         </p>
       </div>
     `
-  });
-}
+  };
 
-/**
- * Enviar email de contacto desde footer
+  // Agregar CC si está configurado
+  if (process.env.EMAIL_CC) {
+    emailOptions.cc = process.env.EMAIL_CC;
+  }
+
+  // Agregar BCC si está configurado
+  if (process.env.EMAIL_BCC) {
+    emailOptions.bcc = process.env.EMAIL_BCC;
+  }
+
+  await resendClient.emails.send(emailOptions);
  */
 async function sendContactEmail(data) {
   const resendClient = getResend();
@@ -86,7 +94,7 @@ async function sendContactEmail(data) {
 
   const { nombre, apellido, telefono, email, mensaje } = data;
 
-  await resendClient.emails.send({
+  const emailOptions = {
     from: 'Formulario Web <onboarding@resend.dev>',
     to: process.env.EMAIL_TO || 'beroiza79@gmail.com',
     subject: 'Nuevo Mensaje desde el Formulario de Contacto (Footer)',
@@ -121,11 +129,19 @@ async function sendContactEmail(data) {
         </p>
       </div>
     `
-  });
-}
+  };
 
-module.exports = {
-  sendQuotationEmail,
+  // Agregar CC si está configurado
+  if (process.env.EMAIL_CC) {
+    emailOptions.cc = process.env.EMAIL_CC;
+  }
+
+  // Agregar BCC si está configurado
+  if (process.env.EMAIL_BCC) {
+    emailOptions.bcc = process.env.EMAIL_BCC;
+  }
+
+  await resendClient.emails.send(emailOptions);
   sendContactEmail,
   getResend
 };
