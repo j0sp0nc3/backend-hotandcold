@@ -85,6 +85,10 @@ async function sendQuotationEmail(data) {
   }
 
   await resendClient.emails.send(emailOptions);
+}
+
+/**
+ * Enviar email de contacto
  */
 async function sendContactEmail(data) {
   const resendClient = getResend();
